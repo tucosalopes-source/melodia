@@ -1,11 +1,20 @@
 # Melodia - Landing Page
 
-Landing page do app de músicas **Melodia**, feita para o Check-Point 05 de Front-end Design (Engenharia de Software).
+Landing page do app de músicas **Melodia**, feita para o Check-Point 05 de Front-end Design.
 
-## Descrição
-Página com menu fixo (fica transparente no topo e escurece ao rolar), seção principal com botão "Ouvir Agora", benefícios, funcionalidades, artistas com player de música, depoimentos, formulário de e-mail e rodapé. Tema preto e azul.
+## Objetivo: 
+apresentar o app Melodia por meio de uma landing page moderna, com identidade visual em preto e azul, voltada a jovens amantes de música que buscam novas descobertas musicais.
+Diferenciais destacados na página:
+- Qualidade de som superior
+- Criação de playlists personalizadas
+- Descoberta de novos artistas
+- Interface intuitiva
 
-O player toca um trecho de 30 segundos de cada música (Travis Scott, Don Toliver, Matuê e Justin Bieber), com botões de play/pause, próxima e anterior.
+## Como funciona o player
+Por questão de direitos autorais, o player não usa as faixas originais dos artistas. Ao clicar em uma música, o script busca automaticamente um trecho de 30 segundos em APIs públicas:
+Colocamos para tentar primeiro a API do Deezer.
+Se não encontrar, colocamos para tentar a API do iTunes como alternativa.
+O player conta com play/pause, próxima e anterior faixa, barra de progresso clicável e avanço automático para a próxima música ao final de cada trecho.
 
 ## Tecnologias
 - HTML5
@@ -15,14 +24,9 @@ O player toca um trecho de 30 segundos de cada música (Travis Scott, Don Tolive
 - Google Fonts (Sora e Inter)
 - JavaScript puro (menu, player e formulário)
 
-## Como abrir
-Extraia o ZIP e abra o arquivo `index.html` no navegador (ou use a extensão Live Server no VS Code). Mantenha `index.html`, `style.css` e `script.js` na mesma pasta. É preciso estar conectado à internet (Tailwind, fontes, imagens e áudios vêm da web).
-
-## Como publicar no GitHub Pages
-1. Crie um repositório e envie os 4 arquivos (`index.html`, `style.css`, `script.js`, `README.md`).
-2. Vá em Settings > Pages, escolha a branch `main` e a pasta `/ (root)`.
-3. Copie o link gerado e entregue no Teams junto com o link do repositório.
-
 ## Integrantes
-- Nome 1
-- Nome 2
+- Gustavo Bidin
+- Isadora Bradac
+- Matheus de Sá
+- Matheus Borges
+- Matheus Carvalho
