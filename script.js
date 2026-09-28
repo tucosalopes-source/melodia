@@ -10,7 +10,7 @@ const artistas = [
     nome: "Don Toliver",
     estilo: "Hip Hop · R&B",
     capa: "https://m.media-amazon.com/images/I/91vobbxGA0L._UF1000,1000_QL80_.jpg",
-    musicas: ["No Idea", "Can't Say", "No Pole"]
+    musicas: ["No Idea", "Can't Feel My Legs", "No Pole"]
   },
   {
     nome: "Matuê",
