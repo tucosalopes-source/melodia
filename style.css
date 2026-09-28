@@ -1,0 +1,86 @@
+/* estilos que complementam o Tailwind */
+html { scroll-behavior: smooth; }
+
+.hero-fundo {
+  background: radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.25), transparent 45%), #050505;
+}
+
+.menu-escuro {
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.caixa {
+  background: #111318;
+  border: 1px solid #1f2430;
+  border-radius: 14px;
+  padding: 24px;
+}
+.caixa h3 { color: #fff; font-weight: 600; margin-bottom: 6px; }
+.caixa p { color: #9ca3af; font-size: 14px; }
+.icone { color: #2563eb; font-size: 26px; margin-bottom: 14px; display: block; }
+
+.pessoa { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 13px; color: #fff; }
+.foto { position: relative; width: 40px; height: 40px; border-radius: 50%; background: #2563eb;
+        display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+
+/* títulos das seções */
+.titulo-secao { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 2.2rem; color: #fff;
+                text-align: center; margin-bottom: 3rem; }
+
+/* efeito nos cards em geral */
+.caixa { transition: transform .25s, border-color .25s; }
+.caixa:hover { transform: translateY(-4px); border-color: #2563eb; }
+
+/* seção de artistas */
+.secao-artistas {
+  background: radial-gradient(ellipse at 50% 0%, rgba(37, 99, 235, 0.18), transparent 60%), #050505;
+}
+.card-artista {
+  background: #0d0f14; border: 1px solid #1f2430; border-radius: 20px; overflow: hidden;
+  transition: transform .3s, border-color .3s, box-shadow .3s;
+}
+.card-artista:hover { transform: translateY(-6px); border-color: #2563eb; box-shadow: 0 12px 40px rgba(37, 99, 235, 0.2); }
+.capa { position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
+.capa img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.card-artista:hover .capa img { transform: scale(1.06); }
+.capa::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0) 60%); }
+.capa-info { position: absolute; left: 18px; right: 18px; bottom: 16px; z-index: 1; }
+.capa-info .estilo { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #60a5fa; }
+.capa-info h3 { font-family: 'Sora', sans-serif; font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1.2; }
+
+.faixas { list-style: none; padding: 10px; }
+.faixa { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+         padding: 11px 12px; border-radius: 10px; font-size: 14px; color: #d1d5db; transition: background .2s; }
+.faixa:hover { background: #171b25; color: #fff; }
+.faixa .num { width: 16px; text-align: center; color: #6b7280; font-size: 13px; }
+.faixa .nome { flex: 1; }
+.faixa .seta { font-size: 11px; color: #2563eb; opacity: 0; transition: opacity .2s; }
+.faixa:hover .seta { opacity: 1; }
+.faixa .eq { display: none; align-items: flex-end; gap: 2px; height: 14px; }
+.faixa .eq i { width: 3px; background: #60a5fa; border-radius: 2px; animation: eq 0.9s infinite ease-in-out; }
+.faixa .eq i:nth-child(2) { animation-delay: .2s; }
+.faixa .eq i:nth-child(3) { animation-delay: .4s; }
+@keyframes eq { 0%, 100% { height: 3px; } 50% { height: 14px; } }
+
+.faixa.tocando { background: rgba(37, 99, 235, 0.18); color: #60a5fa; }
+.faixa.tocando .eq { display: flex; }
+.faixa.tocando .seta, .faixa.tocando .num { display: none; }
+
+/* acabamento dos cards (benefícios, funcionalidades, depoimentos) */
+.caixa { padding: 28px; border-radius: 18px; }
+.caixa h3 { font-family: 'Sora', sans-serif; font-size: 1.1rem; margin-bottom: 8px; }
+.caixa p { line-height: 1.6; }
+.icone {
+  display: flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px; border-radius: 14px; margin-bottom: 18px;
+  background: rgba(37, 99, 235, 0.15); color: #60a5fa; font-size: 22px;
+}
+.caixa:hover .icone { background: #2563eb; color: #fff; }
+.subtitulo { text-align: center; color: #9ca3af; max-width: 34rem; margin: 0 auto 3.5rem; }
+blockquote.caixa p { color: #e5e7eb; font-size: 15px; font-style: italic; }
+
