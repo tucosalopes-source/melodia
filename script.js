@@ -4,25 +4,25 @@ const artistas = [
     nome: "Travis Scott",
     estilo: "Hip Hop · Trap",
     capa: "https://cdn-images.dzcdn.net/images/cover/a2f66f08468fb9897019e82ffb7a5fcb/1900x1900-000000-80-0-0.jpg",
-    musicas: ["Goosebumps", "SICKO MODE", "HIGHEST IN THE ROOM"]
+    musicas: ["BUTTERFLY EFFECT", "SICKO MODE", "HIGHEST IN THE ROOM"]
   },
   {
     nome: "Don Toliver",
     estilo: "Hip Hop · R&B",
     capa: "https://m.media-amazon.com/images/I/91vobbxGA0L._UF1000,1000_QL80_.jpg",
-    musicas: ["No Idea", "Can't Say", "Lose My Mind"]
+    musicas: ["No Idea", "Can't Say", "No Pole"]
   },
   {
     nome: "Matuê",
     estilo: "Trap brasileiro",
     capa: "https://i1.sndcdn.com/artworks-j2gHmRPyr38Q5Apg-YPyBCQ-t500x500.jpg",
-    musicas: ["Imagina Esse Cenário", "Anos Luz", "333"]
+    musicas: ["Imagina Esse Cenário", "De Peça Em Peça", "Outro Plano"]
   },
   {
     nome: "Justin Bieber",
     estilo: "Pop",
     capa: "https://m.media-amazon.com/images/I/81AP9LwM6aL._UF1000,1000_QL80_.jpg",
-    musicas: ["Peaches", "Ghost", "Yummy"]
+    musicas: ["One Time", "Never Say Never", "Yummy"]
   }
 ];
 
@@ -105,12 +105,15 @@ async function pegarPreview(m) {
   const art = norm(m.artista);
   const tit = norm(m.titulo);
 
-  // 1ª tentativa: Deezer (só aceita se artista e título baterem)
+  // 1ª tentativa: Deezer (Busca aberta, sem o filtro restrito artist:"" track:"")
   try {
-    const q = `artist:"${m.artista}" track:"${m.titulo}"`;
+    const q = `${m.artista} ${m.titulo}`;
     const d = await jsonp("https://api.deezer.com/search?limit=10&q=" + encodeURIComponent(q));
+    
+    // Verificamos apenas se a música tem preview e o título bate.
+    // Confiamos na relevância da busca da API para o artista.
     const achou = (d.data || []).find(t =>
-      t.preview && norm(t.artist.name).includes(art) && norm(t.title).includes(tit)
+      t.preview && (norm(t.title).includes(tit) || tit.includes(norm(t.title)))
     );
     if (achou) {
       m.preview = achou.preview;
@@ -118,17 +121,19 @@ async function pegarPreview(m) {
     }
   } catch (e) { /* segue para a 2ª tentativa */ }
 
-  // 2ª tentativa: iTunes (mesma conferência)
+  // 2ª tentativa: iTunes
   const termo = encodeURIComponent(m.artista + " " + m.titulo);
-  const d2 = await jsonp("https://itunes.apple.com/search?media=music&entity=song&limit=10&country=BR&term=" + termo);
+  // Removi o "country=BR" para ampliar a chance de achar versões com preview
+  const d2 = await jsonp("https://itunes.apple.com/search?media=music&entity=song&limit=10&term=" + termo);
+  
   const achou2 = (d2.results || []).find(r =>
-    r.previewUrl && norm(r.artistName).includes(art) && norm(r.trackName).includes(tit)
+    r.previewUrl && (norm(r.trackName).includes(tit) || tit.includes(norm(r.trackName)))
   );
-  if (!achou2) throw new Error("não achou");
+  
+  if (!achou2) throw new Error("Não achou");
   m.preview = achou2.previewUrl;
   return m.preview;
 }
-
 // ---------- player ----------
 async function tocar(i) {
   if (i < 0) i = fila.length - 1;
