@@ -84,3 +84,18 @@ html { scroll-behavior: smooth; }
 .subtitulo { text-align: center; color: #9ca3af; max-width: 34rem; margin: 0 auto 3.5rem; }
 blockquote.caixa p { color: #e5e7eb; font-size: 15px; font-style: italic; }
 
+/* barras deslizantes (tempo e volume) */
+.slider {
+  --p: 0%;
+  -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 999px; cursor: pointer; outline: none;
+  background: linear-gradient(to right, #2563eb var(--p), #1f2937 var(--p));
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+  background: #fff; opacity: 0; transition: opacity .2s;
+}
+.slider:hover::-webkit-slider-thumb { opacity: 1; }
+.slider::-moz-range-thumb {
+  width: 12px; height: 12px; border: 0; border-radius: 50%; background: #fff;
+}

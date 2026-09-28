@@ -12,12 +12,12 @@ const artistas = [
     capa: "https://m.media-amazon.com/images/I/91vobbxGA0L._UF1000,1000_QL80_.jpg",
     musicas: ["No Idea", "Can't Say", "Lose My Mind"]
   },
-{
-  nome: "Matuê",
-  estilo: "Trap brasileiro",
-  capa: "https://i1.sndcdn.com/artworks-j2gHmRPyr38Q5Apg-YPyBCQ-t500x500.jpg",
-  musicas: ["Imagina Esse Cenário", "Anos Luz", "333"]
-},
+  {
+    nome: "Matuê",
+    estilo: "Trap brasileiro",
+    capa: "https://i1.sndcdn.com/artworks-j2gHmRPyr38Q5Apg-YPyBCQ-t500x500.jpg",
+    musicas: ["Imagina Esse Cenário", "Anos Luz", "333"]
+  },
   {
     nome: "Justin Bieber",
     estilo: "Pop",
@@ -34,7 +34,6 @@ artistas.forEach(a => a.musicas.forEach(m => fila.push({ artista: a.nome, capa: 
 const audio = document.getElementById("audio");
 const btnPlay = document.getElementById("btn-play");
 const iconePlay = document.getElementById("icone-play");
-const progresso = document.getElementById("progresso");
 let atual = -1;
 
 // ---------- menu fixo com transparência ----------
@@ -95,22 +94,38 @@ function jsonp(url) {
   });
 }
 
+// tira acentos, padroniza apóstrofos e deixa minúsculo para comparar nomes
+const norm = s => (s || "")
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  .replace(/[’‘`]/g, "'")
+  .toLowerCase();
+
 async function pegarPreview(m) {
   if (m.preview) return m.preview;
-  // 1ª tentativa: Deezer
+  const art = norm(m.artista);
+  const tit = norm(m.titulo);
+
+  // 1ª tentativa: Deezer (só aceita se artista e título baterem)
   try {
     const q = `artist:"${m.artista}" track:"${m.titulo}"`;
-    const d = await jsonp("https://api.deezer.com/search?limit=1&q=" + encodeURIComponent(q));
-    if (d.data && d.data.length && d.data[0].preview) {
-      m.preview = d.data[0].preview;
+    const d = await jsonp("https://api.deezer.com/search?limit=10&q=" + encodeURIComponent(q));
+    const achou = (d.data || []).find(t =>
+      t.preview && norm(t.artist.name).includes(art) && norm(t.title).includes(tit)
+    );
+    if (achou) {
+      m.preview = achou.preview;
       return m.preview;
     }
   } catch (e) { /* segue para a 2ª tentativa */ }
-  // 2ª tentativa: iTunes
+
+  // 2ª tentativa: iTunes (mesma conferência)
   const termo = encodeURIComponent(m.artista + " " + m.titulo);
-  const d2 = await jsonp("https://itunes.apple.com/search?media=music&entity=song&limit=1&term=" + termo);
-  if (!d2.results || !d2.results.length) throw new Error("não achou");
-  m.preview = d2.results[0].previewUrl;
+  const d2 = await jsonp("https://itunes.apple.com/search?media=music&entity=song&limit=10&country=BR&term=" + termo);
+  const achou2 = (d2.results || []).find(r =>
+    r.previewUrl && norm(r.artistName).includes(art) && norm(r.trackName).includes(tit)
+  );
+  if (!achou2) throw new Error("não achou");
+  m.preview = achou2.previewUrl;
   return m.preview;
 }
 
@@ -159,17 +174,68 @@ function formatar(s) {
   const seg = Math.floor(s % 60).toString().padStart(2, "0");
   return min + ":" + seg;
 }
+
+// ---------- tempo e volume ----------
+const barra = document.getElementById("barra");
+const volume = document.getElementById("volume");
+const iconeVol = document.getElementById("icone-vol");
+let arrastando = false;
+let volumeAntes = 1;
+
+// pinta a parte preenchida da barra
+function preencher(el) {
+  const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+  el.style.setProperty("--p", pct + "%");
+}
+
+// atualiza a barra conforme a música toca
 audio.addEventListener("timeupdate", () => {
   if (!audio.duration) return;
-  progresso.style.width = (audio.currentTime / audio.duration) * 100 + "%";
-  document.getElementById("p-atual").textContent = formatar(audio.currentTime);
   document.getElementById("p-total").textContent = formatar(audio.duration);
+  if (arrastando) return;
+  document.getElementById("p-atual").textContent = formatar(audio.currentTime);
+  barra.value = (audio.currentTime / audio.duration) * 100;
+  preencher(barra);
 });
-document.getElementById("barra").addEventListener("click", e => {
+
+// arrastando: mostra o tempo, e só muda a música ao soltar
+barra.addEventListener("input", () => {
   if (!audio.duration) return;
-  const r = e.currentTarget.getBoundingClientRect();
-  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+  arrastando = true;
+  preencher(barra);
+  document.getElementById("p-atual").textContent = formatar((barra.value / 100) * audio.duration);
 });
+barra.addEventListener("change", () => {
+  if (audio.duration) audio.currentTime = (barra.value / 100) * audio.duration;
+  arrastando = false;
+});
+
+// volume
+function atualizarIconeVolume() {
+  iconeVol.className = "fa-solid w-5 " + (
+    audio.muted || audio.volume === 0 ? "fa-volume-xmark" :
+    audio.volume < 0.5 ? "fa-volume-low" : "fa-volume-high"
+  );
+}
+volume.addEventListener("input", () => {
+  audio.muted = false;
+  audio.volume = Number(volume.value);
+  preencher(volume);
+  atualizarIconeVolume();
+});
+document.getElementById("btn-mudo").addEventListener("click", () => {
+  if (audio.muted || audio.volume === 0) {
+    audio.muted = false;
+    audio.volume = volumeAntes || 0.5;
+  } else {
+    volumeAntes = audio.volume;
+    audio.muted = true;
+  }
+  volume.value = audio.muted ? 0 : audio.volume;
+  preencher(volume);
+  atualizarIconeVolume();
+});
+preencher(volume);
 
 // ---------- formulário ----------
 document.getElementById("form").addEventListener("submit", e => {
@@ -179,4 +245,3 @@ document.getElementById("form").addEventListener("submit", e => {
   msg.className = "mt-4 text-sm h-5 text-azulclaro";
   e.target.reset();
 });
-
